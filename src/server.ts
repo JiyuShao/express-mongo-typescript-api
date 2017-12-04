@@ -83,12 +83,12 @@ app.get("/", homeController.index);
  */
 app.post("/login", userController.postLogin);
 app.post("/signup", userController.postSignup);
+app.get("/auth/profile",  userController.getProfile);
+app.post("/auth/profile", userController.postProfile);
 // app.get("/forgot", userController.getForgot);
 // app.post("/forgot", userController.postForgot);
 // app.get("/reset/:token", userController.getReset);
 // app.post("/reset/:token", userController.postReset);
-// app.get("/auth/account",  userController.getAccount);
-// app.post("/auth/profile", userController.postUpdateProfile);
 // app.post("/auth/password", userController.postUpdatePassword);
 // app.post("/auth/delete", userController.postDeleteAccount);
 app.get("/auth/token", apiController.getApi);

@@ -33,10 +33,10 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
       return res.json({ status: "failed", message: info.message });
     }
     const tokenObject = {
-      admin: user.id
+      id: user.id
     };
     const token = passportConfig.signToken(tokenObject);
-    return res.json({ status: "success", message: token });
+    return res.json({ status: "success", response: { token: token } });
   })(req, res, next);
 };
 
@@ -74,12 +74,25 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
 };
 
 /**
- * GET /account
+ * GET /auth/profile
  * Profile page.
  */
-export let getAccount = (req: Request, res: Response) => {
-  res.render("account/profile", {
-    title: "Account Management"
+export let getProfile = (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.app.get("tokenObject").id;
+  User.findById(userId, (err: Error, user: UserModel) => {
+    if (err) { return next(err); }
+    if (!user) {
+      return res.json({ status: "failed", message: "Get Profile Failed." });
+    }
+    return res.json({
+      status: "success", response: {
+        email: user.email || "",
+        name: user.profile.name || "",
+        gender: user.profile.gender || "",
+        location: user.profile.location || "",
+        description: user.profile.description || "",
+      }
+    });
   });
 };
 
@@ -87,34 +100,33 @@ export let getAccount = (req: Request, res: Response) => {
  * POST /account/profile
  * Update profile information.
  */
-export let postUpdateProfile = (req: Request, res: Response, next: NextFunction) => {
-  req.assert("email", "Please enter a valid email address.").isEmail();
-  req.sanitize("email").normalizeEmail({ gmail_remove_dots: false });
+export let postProfile = (req: Request, res: Response, next: NextFunction) => {
+  // req.assert("email", "Please enter a valid email address.").isEmail();
+  // req.sanitize("email").normalizeEmail({ gmail_remove_dots: false });
 
-  const errors = req.validationErrors();
+  // const errors = req.validationErrors();
 
-  if (errors) {
-    req.flash("errors", errors);
-    return res.redirect("/account");
-  }
+  // if (errors) {
+  //   req.flash("errors", errors);
+  //   return res.redirect("/account");
+  // }
 
-  User.findById(req.user.id, (err, user: UserModel) => {
+  const userId = req.app.get("tokenObject").id;
+  User.findById(userId, (err, user: UserModel) => {
     if (err) { return next(err); }
-    user.email = req.body.email || "";
+    // user.email = req.body.email || "";
     user.profile.name = req.body.name || "";
     user.profile.gender = req.body.gender || "";
     user.profile.location = req.body.location || "";
-    user.profile.website = req.body.website || "";
+    user.profile.description = req.body.description || "";
     user.save((err: WriteError) => {
       if (err) {
         if (err.code === 11000) {
-          req.flash("errors", { msg: "The email address you have entered is already associated with an account." });
-          return res.redirect("/account");
+          return res.json({ status: "failed", message: "The email address you have entered is already associated with an account." });
         }
         return next(err);
       }
-      req.flash("success", { msg: "Profile information has been updated." });
-      res.redirect("/account");
+      return res.json({ status: "success", message: "Profile information has been updated." });
     });
   });
 };

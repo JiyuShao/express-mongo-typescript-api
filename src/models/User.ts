@@ -15,7 +15,7 @@ export type UserModel = mongoose.Document & {
     gender: string,
     location: string,
     website: string,
-    picture: string
+    description: string,
   },
 
   comparePassword: (candidatePassword: string, cb: (err: any, isMatch: any) => {}) => void,
@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
     gender: String,
     location: String,
     website: String,
-    picture: String
+    description: String,
   }
 }, { timestamps: true });
 
