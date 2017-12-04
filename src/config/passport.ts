@@ -32,8 +32,8 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
  * Generate json web token
  */
 export let signToken = (tokenObject: object) => {
-  return jwt.sign(tokenObject, process.env.TOKEN_SECRET, { expiresIn: '1h' });
-} 
+  return jwt.sign(tokenObject, process.env.TOKEN_SECRET, { expiresIn: "1h" });
+};
 
 /**
  * Oauth Required middleware.
@@ -41,17 +41,17 @@ export let signToken = (tokenObject: object) => {
 export let isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
 
   // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  const token = req.body.token || req.query.token || req.headers["x-access-token"];
 
   // decode token
   if (token) {
     // verifies secret and checks exp
     jwt.verify(token, process.env.TOKEN_SECRET, function (err: Error, tokenObject: object) {
       if (err) {
-        return res.json({ status: "failed", message: 'Failed to authenticate token.' });
+        return res.json({ status: "failed", message: "Failed to authenticate token." });
       } else {
         // if everything is good, save to request for use in other routes
-        req.app.set('tokenObject', tokenObject);
+        req.app.set("tokenObject", tokenObject);
         next();
       }
     });

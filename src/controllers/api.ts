@@ -10,5 +10,5 @@ import { Response, Request, NextFunction } from "express";
  * List of API examples.
  */
 export let getApi = (req: Request, res: Response) => {
-  res.json({ status: "success", response: { text: req.app.get('tokenObject') } });
+  res.json({ status: "success", response: { text: req.app.get("tokenObject") } });
 };

@@ -35,7 +35,7 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
     const tokenObject = {
       admin: user.id
     };
-    var token = passportConfig.signToken(tokenObject);
+    const token = passportConfig.signToken(tokenObject);
     return res.json({ status: "success", message: token });
   })(req, res, next);
 };
@@ -66,8 +66,10 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
     if (existingUser) {
       return res.json({ status: "failed", message: "Account with that email address already exists." });
     }
-    
-    return res.json({ status: "success", message: "New user created! You can login now." });
+    user.save((err) => {
+      if (err) { return next(err); }
+      return res.json({ status: "success", message: "New user created! You can login now." });
+    });
   });
 };
 

@@ -10,7 +10,6 @@ import * as errorHandler from "errorhandler";
 import * as lusca from "lusca";
 import * as dotenv from "dotenv";
 import * as mongo from "connect-mongo";
-import * as flash from "express-flash";
 import * as path from "path";
 import * as mongoose from "mongoose";
 import * as passport from "passport";
@@ -64,7 +63,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 app.use(passport.initialize());
-app.use(flash());
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {
